@@ -53,13 +53,29 @@ let sheetsClient = null;
 async function getSheetsClient() {
   if (sheetsClient) return sheetsClient;
 
-  // Parse GOOGLE_CREDENTIALS from env
-  const credentials = JSON.parse(process.env.GOOGLE_CREDENTIALS);
+  const raw = process.env.GOOGLE_CREDENTIALS;
+  if (!raw) throw new Error("GOOGLE_CREDENTIALS env var not set");
+
+  let credentials;
+  try {
+    credentials = JSON.parse(raw);
+  } catch (err) {
+    throw new Error("Invalid JSON in GOOGLE_CREDENTIALS: " + err.message);
+  }
+
   const { client_email, private_key } = credentials;
+  if (!client_email || !private_key) {
+    throw new Error(
+      "GOOGLE_CREDENTIALS must include client_email and private_key"
+    );
+  }
 
-  const auth = new google.auth.JWT(client_email, null, private_key, SCOPES);
+  const normalizedKey = private_key.replace(/\\n/g, "\n");
+
+  const auth = new google.auth.JWT(client_email, null, normalizedKey, SCOPES);
+  await auth.authorize();
+
   sheetsClient = google.sheets({ version: "v4", auth });
-
   return sheetsClient;
 }
 
