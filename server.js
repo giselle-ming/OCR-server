@@ -111,6 +111,25 @@ app.post("/api/append", async (req, res) => {
   }
 });
 
+app.get("/api/auth", async (req, res) => {
+  try {
+    await getSheetsClient(); // will authorize the JWT if not already done
+    return res.status(200).json({ authenticated: true });
+  } catch (err) {
+    console.error("Google auth failed:", err);
+    return res.status(500).json({ authenticated: false, error: err.message });
+  }
+});
+
+getSheetsClient()
+  .then(() => console.log("Google Sheets service account authorized"))
+  .catch((err) =>
+    console.warn(
+      "Google Sheets pre-auth failed (will try on request):",
+      err.message
+    )
+  );
+
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
