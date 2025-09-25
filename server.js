@@ -217,7 +217,7 @@ app.get("/oauth2callback", async (req, res) => {
     await saveTokens(tokens);
 
     sheetsClient = google.sheets({ version: "v4", auth: client });
-    res.send("Authentication successful! You can now use the app.");
+    res.redirect("https://giselle-ming.github.io/auto-invoice/");
   } catch (err) {
     console.error("OAuth callback error:", err);
     res.status(500).send("Authentication failed");
