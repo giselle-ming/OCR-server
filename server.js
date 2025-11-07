@@ -10,6 +10,7 @@ const { google } = require("googleapis");
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// TODO : refactor code to use async/await instead of callbacks where possible
 // Middleware
 app.use(cors());
 app.use(express.json());
@@ -100,6 +101,13 @@ async function loadStoredTokens() {
   return null;
 }
 
+/**
+ * Saves the given OAuth tokens to a file on disk.
+ *
+ * @param {Object} tokens An object containing the OAuth tokens to be saved.
+ *
+ * @throws {Error} If writing the token file fails.
+ */
 async function saveTokens(tokens) {
   try {
     fs.writeFileSync(TOKEN_FILE, JSON.stringify(tokens));
@@ -109,7 +117,13 @@ async function saveTokens(tokens) {
   }
 }
 
-// Sheets Client Loader
+/**
+ * Returns a Google Sheets client, authenticated with either stored OAuth tokens or
+ * service account credentials from the GOOGLE_CREDENTIALS environment variable.
+ *
+ * @throws {Error} If no OAuth tokens are stored and GOOGLE_CREDENTIALS is not set.
+ * @returns {Promise<google.sheets_v4.Sheets>} A Promise resolving to a Google Sheets client.
+ */
 async function getSheetsClient() {
   if (sheetsClient) return sheetsClient;
 
