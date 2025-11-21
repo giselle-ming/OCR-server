@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@datadog/browser-rum": "^6.24.1",
     "cors": "^2.8.5",
     "dotenv": "^16.6.1",
     "express": "^5.1.0",
