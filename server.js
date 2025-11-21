@@ -1,5 +1,5 @@
 require("dotenv").config();
-import { datadogRum } from "@datadog/browser-rum";
+const { datadogRum } = require("@datadog/browser-rum");
 
 const express = require("express");
 const multer = require("multer");
